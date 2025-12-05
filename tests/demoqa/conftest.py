@@ -5,7 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from selene import Browser, Config
 
 from tests.demoqa.utils import attach
-
+from .utils import attach
 
 @pytest.fixture(scope='function')
 def setup_browser(request):
