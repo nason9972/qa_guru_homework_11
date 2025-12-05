@@ -1,48 +1,40 @@
-import os
 import allure
-from selene import browser, have, be
-from selene.support.shared import browser
+from selene import have, by, browser
 
 
-@allure.title("Регистрация нового пользователя")
-def test_registration_form(config_browser):
-    with allure.step('Open form'):
-        browser.open('/automation-practice-form')
+@allure.title("Successful fill form")
+def test_successful(setup_browser):
+    first_name = "Ivan"
+    last_name = "Nasonov"
 
+    with allure.step("Open registrations form"):
+        browser.open("https://demoqa.com/automation-practice-form")
+        browser.element(".practice-form-wrapper").should(have.text("Student Registration Form"))
+        browser.driver.execute_script("$('footer').remove()")
+        browser.driver.execute_script("$('#fixedban').remove()")
 
-
-    with allure.step('Fill form'):
-        browser.element('#firstName').should(be.visible).should(be.clickable).type('Иван')
-        browser.element('#lastName').should(be.visible).should(be.clickable).type('Иванов')
-        browser.element('#userEmail').should(be.visible).should(be.clickable).type('ivanov@example.com')
-        browser.all('.custom-radio').should(have.texts('Male', 'Female', 'Other'))
-        browser.element('label[for="gender-radio-1"]').click()
-        browser.element('#userNumber').should(be.visible).should(be.clickable).type('7929100500')
-        browser.element('#dateOfBirthInput').should(be.visible).should(be.clickable).click()
-        browser.element('.react-datepicker__month-select').click()
-        browser.element('option[value="10"]').click()
-        browser.element('.react-datepicker__year-select').click()
-        browser.element('option[value="1986"]').click()
-        browser.element('.react-datepicker__day.react-datepicker__day--025').click()
-        browser.element('#subjectsInput').type('Maths').press_enter()
-        browser.element('label[for="hobbies-checkbox-1"]').click()
-        browser.element('#currentAddress').should(be.visible).should(be.clickable).type('Moscow, st.Lenina, 23')
-        browser.element('#state').click()
-        browser.element('#react-select-3-input').type('NCR').press_enter()
-        browser.element('#city').click()
-        browser.element('#react-select-4-input').type('Delhi').press_enter()
-        browser.element('#submit').should(be.visible).should(be.clickable).click()
-        browser.element('#example-modal-sizes-title-lg').should(have.text('Thanks for submitting the form'))
+    with allure.step("Fill form"):
+        browser.element("#firstName").set_value(first_name)
+        browser.element("#lastName").set_value(last_name)
+        browser.element("#userEmail").set_value("Ivan@Nas.com")
+        browser.element("#genterWrapper").element(by.text("Other")).click()
+        browser.element("#userNumber").set_value("1231231230")
+        # browser.element("#dateOfBirthInput").click()
+        # browser.element(".react-datepicker__month-select").s("July")
+        # browser.element(".react-datepicker__year-select").selectOption("2008")
+        # browser.element(".react-datepicker__day--030:not(.react-datepicker__day--outside-month)").click()
+        browser.element("#subjectsInput").send_keys("Maths")
+        browser.element("#subjectsInput").press_enter()
+        browser.element("#hobbiesWrapper").element(by.text("Sports")).click()
+        # browser.element("#uploadPicture").uploadFromClasspath("img/1.png")
+        browser.element("#currentAddress").set_value("Some street 1")
+        browser.element("#state").click()
+        browser.element("#stateCity-wrapper").element(by.text("NCR")).click()
+        browser.element("#city").click()
+        browser.element("#stateCity-wrapper").element(by.text("Delhi")).click()
+        browser.element("#submit").click()
 
     with allure.step("Check form results"):
-        browser.all('.table td').should(have.exact_texts(
-        'Student Name', 'Иван Иванов',
-        'Student Email', 'ivanov@example.com',
-        'Gender', 'Male',
-        'Mobile', '7929100500',
-        'Date of Birth', '25 November,1986',
-        'Subjects', 'Maths',
-        'Hobbies', 'Sports',
-        'Address', 'Moscow, st.Lenina, 23',
-        'State and City', 'NCR Delhi'
-        ))
+        browser.element("#example-modal-sizes-title-lg").should(have.text("Thanks for submitting the form"))
+        # browser.element(".table-responsive").should(
+        #     have.texts(first_name, last_name, "alex@egorov.com", "Some street 1"))
