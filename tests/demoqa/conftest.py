@@ -7,8 +7,8 @@ from selene import Browser, Config
 from tests.demoqa.utils import attach
 from .utils import attach
 
-@pytest.fixture(scope='function')
-def setup_browser(request):
+@pytest.fixture(scope='function', autouse=True)
+def setup_browser():
     options = Options()
     options.set_capability('goog:loggingPrefs', {
         'browser': 'ALL',
